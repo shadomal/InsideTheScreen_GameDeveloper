@@ -1,11 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PickaxeWood : MonoBehaviour, Pickaxe
+/*public class PickaxeWood : MonoBehaviour, Pickaxe
 {
 
-    public int getID(){
-        return 2;
-    }
+    public int getID() => 2;
 
     public string getName()
     {
@@ -16,10 +16,10 @@ public class PickaxeWood : MonoBehaviour, Pickaxe
     {
         return 0;
     }
-    
+
     public GameObject getPickaxeSkin()
     {
         return null;
     }
 
-}
+}*/

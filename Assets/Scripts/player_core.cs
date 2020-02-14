@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class player_core : MonoBehaviour
 {
@@ -10,23 +11,41 @@ public class player_core : MonoBehaviour
     private int speed;
     private float jumpBoost;
     private string displayName;
-    private Rigidbody rg;
+    private Rigidbody rgPlayer;
+    private Animator animPlayer;
+    //Caso precise
+    private Camera cam;
 
-    // Start is called before the first frame update
-    void Start()
+    //Awake = O script estará ativado independendo de está sendo usado ou não.
+    private void Awake()
     {
         health = 10;
         maxHealth = 35;
         jumpBoost = 0;
         displayName = null;
-        speed = 10;
-        rg = GetComponent<Rigidbody>();
+        speed = 50;
+        rgPlayer = GetComponent<Rigidbody>();
+        animPlayer = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
 
+    }
+
+
+    void Update()
+    {
+        //Função para identificar aproximação do mouse em objetos dentro da cena;
+        RaycastHit hit;
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 15))
+        {
+            if (hit.collider.tag == "tag escolhida")
+            {
+                //ação que ocorre ao passar o mouse em cima de algo
+            }
+        }
     }
     //gets e sets para os atributos privados.
     public string getName()
@@ -38,23 +57,35 @@ public class player_core : MonoBehaviour
         this.displayName = name;
     }
 
-    //movimentação personagem.
+    //Metódo de movimentação do personagem.
     public void move(Vector3 vector3)
-    {
-        if (vector3.x > 1)
+    {                              //ESPAÇO PARA COMENTARIOS
+        Debug.Log("Função ON!!!!");// 
+                                   //
+                                   // 
+                                   // 
+                                   //  
+
+        if (vector3.x >= 1)
         {
-            rg.velocity = new Vector3(vector3.x + speed, vector3.y, vector3.z);
+            rgPlayer.velocity = new Vector3(+speed, 0, 0);
         }
-        else if (vector3.y > 1)
+        else if (vector3.x <= 1)
         {
-            jump();
-        }
-        else if (vector3.z > 1){
-            rg.velocity = new Vector3(vector3.x, vector3.y, vector3.z + speed);
+            rgPlayer.velocity = new Vector3(-speed, 0, 0);
         }
 
+        if (vector3.z >= 1)
+        {
+            rgPlayer.velocity = new Vector3(0, 0, +speed);
+        }
+        else if (vector3.z <= 1)
+        {
+            rgPlayer.velocity = new Vector3(0, 0, -speed);
+        }
     }
-    //Colisores.
+
+    //Colisores e suas respectivas funções.
     private void OnCollisionEnter(Collision OtherObj)
     {
         if (OtherObj.gameObject.tag == "enemy")
@@ -66,26 +97,47 @@ public class player_core : MonoBehaviour
     {
 
     }
-    //Metodos.
+
+    //Metódos.
     public void jump(float jump)
     {
-        rg.AddForce(new Vector3(0, 0, 5 + jumpBoost));
+        rgPlayer.AddForce(new Vector3(0, 5 + jumpBoost, 0));
     }
+
     public void jump()
     {
         jump(0.0f);
     }
+
     public void applyDamage(int damage)
     {
         health -= damage;
         if (health <= 0)
         {
-            Debug.Log("Death");
+            die();
         }
         else
         {
             Debug.Log("Live" + health);
         }
+    }
+    //ESPAÇO PARA COMENTARIOS
+    //
+    //
+    // 
+    //
+
+    //Metódo para respawn e morte do player evitando que ele dependa exclusivamente que seu hp chegue a zero para dizer que ele morreu...
+    public void die()
+    {
+        //Aba destaca para troca de Cena para "Cena de Morte com botão de respawn"
+        SceneManager.LoadScene("Tela Morte");
+
+    }
+
+    public void respawn()
+    {
+
     }
 }
 

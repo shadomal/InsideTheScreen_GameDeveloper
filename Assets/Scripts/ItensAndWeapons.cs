@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ItensAndWeapons : MonoBehaviour
+/*public class ItensAndWeapons : MonoBehaviour
 {
     private Dictionary<int, Sword> swords;
     private Dictionary<int, Pickaxe> pickaxes;
@@ -29,7 +29,7 @@ public class ItensAndWeapons : MonoBehaviour
 
         this.pickaxes = new Dictionary<int, Pickaxe>();
         foreach (Pickaxe pik in pickaxeConvert){
-            pickaxes.Add(pik.getID(), pik);
+            pickaxes.Add(pik.getID, pik);
         }
     }
 
@@ -38,7 +38,7 @@ public class ItensAndWeapons : MonoBehaviour
     {
 
     }
-}
+}*/
 
 [System.Serializable]
 public class Itens

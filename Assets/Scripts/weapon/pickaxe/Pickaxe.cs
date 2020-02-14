@@ -1,6 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public interface Pickaxe
+/*public interface Pickaxe
 {
 
     public int getID();
@@ -8,4 +10,4 @@ public interface Pickaxe
     public int getDamage();
     public GameObject getPickaxeSkin();
 
-}
+}*/

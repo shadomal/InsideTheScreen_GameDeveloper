@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SwordIron : MonoBehaviour, Sword
+/*public class SwordIron : MonoBehaviour, Sword
 {
     public int getID() {
         return 1;
@@ -21,4 +21,4 @@ public class SwordIron : MonoBehaviour, Sword
         return null;
     }
 
-}
+}*/

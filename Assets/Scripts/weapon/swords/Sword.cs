@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface Sword
+/*public interface Sword
 {
 
     public int getID();
@@ -8,4 +8,4 @@ public interface Sword
     public int getDamage();
     public GameObject getWaeponSkin();
 
-}
+}*/

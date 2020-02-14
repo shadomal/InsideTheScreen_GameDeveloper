@@ -1,11 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PickaxeIron : MonoBehaviour, Pickaxe
+/*public class PickaxeIron : MonoBehaviour, Pickaxe
 {
 
-    public int getID(){
-        return 1;
-    }
+    public int getID() => 1;
 
     public string getName()
     {
@@ -22,4 +22,4 @@ public class PickaxeIron : MonoBehaviour, Pickaxe
         return null;
     }
 
-}
+}*/
