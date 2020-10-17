@@ -4,283 +4,241 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
-public class player_core : playerWeapons
+public class player_core : MonoBehaviour
 {
-    [SerializeField] private GameObject[] players = new GameObject[1];
-    private int health;
-    private int maxHealth;
+    //array de players;
+    [SerializeField] private GameObject[] players = new GameObject[2];
+    private Rigidbody rigidPlayer;
+    public float jumpForce = 300;
+    private int life;
     private int speed;
-    private float jumpBoost;
-    private string displayName;
-    private Rigidbody rgPlayer;
-    private Animator animPlayer;
-    private Transform trans;
-    private bool playerSwitch2;
-    //Caso precise
-    private Camera cam;
-    //Controlador Troca de Jogador
-    private bool playerSwitch;
-    //Awake = O script estará ativado independente de está sendo usado ou não.
-    private long cooldown = 0L;
+    private int MaxLife;
+    [SerializeField] private Image _lifeBar;
+    public bool onGround = true;                    //novo
+    public GameObject Chicote;                    // novo
+    public GameObject SomTrocaDePers;
+    public GameObject TelaVitoria;
+    public GameObject SomAmbiente;
+    public GameObject SomVitoria;
+    public GameObject SomLevandoDano;
+
     private Animator anim;
-
-    private int countPlayer;
-
+    [SerializeField] private GameObject CanvasDeath;
     private void Awake()
     {
-        countPlayer = 0;
-        health = 10;
-        maxHealth = 35;
-        jumpBoost = 0;
-        displayName = null;
-        speed = 10;
-        rgPlayer = GetComponent<Rigidbody>();
-        animPlayer = GetComponent<Animator>();
+        life = 100;
+        speed = 20;
+        MaxLife = 100;
+        rigidPlayer = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        playerSwitch = false;
-    }
-    void Start()
-    {
-        //players[1].gameObject.GetComponent<Player_Control>().enabled = false;
     }
 
-    void Update()
+    private void Update()
     {
 
-        // Função para identificar aproximação do mouse em objetos dentro da cena;
-        RaycastHit hit;
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 15))
-        {
-            if (hit.collider.tag == "tag escolhida")
-            {
-                //ação que ocorre ao passar o mouse em cima de algo
-            }
-        }
     }
-    //gets e sets para os atributos privados.
-    public string getName()
-    {
-        return displayName;
-    }
-    public void setName(string name)
-    {
-        this.displayName = name;
-    }
-
-    //Metódo de movimentação do personagem.
+    //movimentação e pulo;
     public void move(float moveH, float moveV)
-    {                              //ESPAÇO PARA COMENTARIOS
-                                   //
-                                   //
-                                   // Arrumar a movimentação em Y e X para o objeto/player cair suavimente.
-                                   // 
-                                   //  
-                                   //rgPlayer.velocity = new Vector3(moveH * speed, rgPlayer.velocity.y, moveV * speed);
-        rgPlayer.velocity = transform.forward * moveV * speed;
-        transform.Rotate(0, moveH * speed, 0);
-    }
-
-    //Colisores e suas respectivas funções.
-    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.gameObject.tag == "enemyShoot")
+        Vector3 novaVel = Vector3.right * moveH * speed;
+        if (moveH < 0 && transform.rotation.eulerAngles.y != 270)
         {
-            applyDamage(1);
+            Vector3 newRot = new Vector3(0, 270, 0);
+            transform.rotation = Quaternion.Euler(newRot);
         }
-    }
-    public void OnCollisionExit(Collision exitObj)
-    {
-
-    }
-    private void OnTriggerEnter(Collider otherTriggrs)
-    {
-        if (otherTriggrs.gameObject.tag == "enemyShoot")
+        if (moveH > 0 && transform.rotation.eulerAngles.y != 90)
         {
-            applyDamage(1);
+            Vector3 newRot = new Vector3(0, 90, 0);
+            transform.rotation = Quaternion.Euler(newRot);
         }
-    }
-    public void OnCollisionStay(Collision OtherObj)
-    {
-        if (OtherObj.gameObject.tag == "HealthBonus")
+        //transform.Rotate(0, moveH * speed, 0);
+        novaVel.y = rigidPlayer.velocity.y;
+        rigidPlayer.velocity = novaVel;
+        if (moveH > 0 || moveH < 0)
         {
-            changeHealth(10);
-        }
-        else if (OtherObj.gameObject.tag == "Limbo")
-        {
-            Limbo();
-        }
-
-    }
-
-    //Metódos.
-    public void jump(float jump)
-    {
-        rgPlayer.AddForce(new Vector3(0, 5 + jumpBoost, 0));
-    }
-
-    public void jump()
-    {
-        jump(0.0f);
-    }
-
-    public void applyDamage(int damage)
-    {
-        drainHealth(1);
-    }
-
-    public void playAnimation()
-    {
-        // run animatio
-
-    }
-
-    private GameObject getActiveControl()
-    {
-        return players[countPlayer];
-    }
-
-    private long getTimeNow()
-    {
-        return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-    }
-
-    public void verifySwitch()
-    {
-        /*Debug.Log("Jogador atual: " + countPlayer + " | Status: " + (players[countPlayer] == false));
-        if (players[countPlayer] == false)
-        {
-            
-        }*/
-    }
-
-    /*public void switchControl()
-    {
-        if (getTimeNow() < cooldown)
-        {
-            playerSwitch = false;
-            return;
-        }   
-        cooldown = getTimeNow() + 5000;
-        Debug.Log("Tempo Restante = " + cooldown * 1000);
-        playerSwitch = true;
-        Debug.Log("Desativando jogador: " + countPlayer);
-        players[0].gameObject.GetComponent<Player_Control>().enabled = false;
-        players[0].transform.GetChild(0).gameObject.SetActive(false);
-
-        //countPlayer = getNextAllowed();
-
-        if (playerSwitch == true)
-        {
-            playerSwitch2 = true;
-            playerSwitch = false;
-            Debug.Log("Ativando jogador: " + countPlayer);
-            players[1].gameObject.GetComponent<PlayerTwoControl>().enabled = true;
-            players[1].transform.GetChild(0).gameObject.SetActive(true);
-            players[1].transform.GetChild(1).gameObject.SetActive(true);
-        }
-        else if (playerSwitch2 == true)
-        {
-            playerSwitch = true;
-            playerSwitch2 = false;
-            players[0].gameObject.GetComponent<Player_Control>().enabled = true;
-            players[0].transform.GetChild(0).gameObject.SetActive(true);
-            
-        }
-        //if //else
-    }*/
-    // private long getTimeNow()
-    // {
-    //     return System.DateTime.Now.Millisecond;
-    // }
-    // private long delay = 0L;
-
-    private bool canExecute = false;
-
-
-    public void switchControl()
-    {
-        if (getTimeNow() < cooldown)
-        {
-            playerSwitch = false;
-            return;
-        }
-        cooldown = getTimeNow() + 5000;
-        // Debug.Log(delay + " | " + getTimeNow());
-        // if (delay >= getTimeNow())
-        // {
-        //     Debug.Log("Code stopped");
-        //     return;
-        // }
-        // delay = getTimeNow() + 825;
-        players[countPlayer].gameObject.GetComponent<Player_Control>().enabled = false;
-        players[countPlayer].transform.GetChild(0).gameObject.SetActive(false);
-
-        countPlayer = (countPlayer + 1 >= players.Length ? 0 : countPlayer + 1);
-        //if //else
-        players[countPlayer].gameObject.GetComponent<Player_Control>().enabled = true;
-        players[countPlayer].transform.GetChild(0).gameObject.SetActive(true);
-    }
-
-    public int getNextAllowed()
-    {
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[countPlayer] == true)
-            {
-                return countPlayer;
-            }
-        }
-        return -1;
-    }
-
-    //ESPAÇO PARA COMENTARIOS
-    //
-    //
-    // 
-    //
-
-    //Metódo para respawn e morte do player evitando que ele dependa exclusivamente que seu hp chegue a zero para dizer que ele morreu...
-    public void die()
-    {
-        Destroy(gameObject);
-    }
-    public void Limbo()
-    {
-        setHealth(-500);
-    }
-    public void respawn()
-    {
-
-    }
-    // public void whipAtack()
-    // {
-    //     Debug.Log("Function On!!! enable animation;");
-    //     players[1].transform.GetChild(1).gameObject.SetActive(true);
-    //     playAnimWhip();
-
-    // }
-
-    // Everthing about health
-    public int getHealth() => this.health;
-
-    public void setHealth(int health)
-    {
-        if (health >= maxHealth)
-        {
-            this.health = maxHealth;
-        }
-        else if (health <= 0)
-        {
-            this.die();
+            anim.SetBool("andar", true);
         }
         else
         {
-            this.health = health;
+            anim.SetBool("andar", false);
         }
     }
-    public void changeHealth(int incrementHealth) => this.setHealth(this.health + incrementHealth);
-    public void drainHealth(int damage) => this.setHealth(this.health - damage);
+    public void jump()
+    {
+        //rigidPlayer.velocity = new Vector3(0, jumpForce, 0);
+        rigidPlayer.AddForce(0, jumpForce, 0);
+        onGround = false; //novo
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            anim.SetBool("pular", false);
+        }
+        else
+        {
+            anim.SetBool("pular", true);
+        }
+    }
+
+    //Colisores e triggeres
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "enemyShoot")
+        {
+            applyDamage(15);
+        }
+        if (other.gameObject.tag == "life")
+        {
+            IncrementHealth(100);
+        }
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "limbo")
+        {
+            applyDamage(500);
+        }
+
+        if (other.gameObject.tag == "doorPuzzle")
+        {
+            applyDamage(20);
+        }
+        if (other.gameObject.tag == "chao")         //novo
+        {
+            onGround = true;                        //novo
+        }
+        if (other.gameObject.tag == "moeda")         //novo
+        {
+            TelaVitoria.SetActive(true);             //novo
+            SomAmbiente.SetActive(false);
+            SomVitoria.SetActive(true);
+        }
+
+    }
+
+    //Ataques
+
+    public void ativarChicote()                     //novo
+    {
+        Debug.Log("chicote ativado");
+        Chicote.SetActive(true);
+    }
+
+    public void desativarChicote()                  //novo
+    {
+        Debug.Log("chicote desativado");
+        Chicote.SetActive(false);
+    }
+
+    //TROCA DE PERSONAGEM
+    public void SwitchControl()
+    {
+        if (players[0] != null)
+        {
+            players[0].gameObject.GetComponent<Player_Control>().enabled = false;
+        }
+        Debug.Log("Troquei");
+        if (players[1] != null)
+        {
+            players[1].gameObject.GetComponent<PlayerTwoControl>().enabled = true;
+        }
+    }
+    public void BackPlayer()
+    {
+        if (players[0] != null)
+        {
+            players[0].gameObject.GetComponent<Player_Control>().enabled = true;
+        }
+        Debug.Log("Troquei");
+        if (players[1] != null)
+        {
+            players[1].gameObject.GetComponent<PlayerTwoControl>().enabled = false;
+        }
+
+    }
+
+
+
+    public void AtivarSfxTroca()
+    {
+        SomTrocaDePers.SetActive(true);
+    }
+    public void DesativarSfxTroca()
+    {
+        SomTrocaDePers.SetActive(false);
+    }
+
+    public void DeathController()
+    {
+        Destroy(gameObject);
+        CallDeathScene();
+        /*if (isDead())
+        {
+            Debug.Log("On death Scene Calling");
+            CallDeathScene();
+        }*/
+    }
+
+    public bool isDead()
+    {
+        return players[0] == null && players[1] == null;
+    }
+
+    public void CallDeathScene()
+    {
+        //Cena de morte dos player
+        CanvasDeath.gameObject.SetActive(true);
+    }
+
+    //Controladores de vida
+    public void applyDamage(int damageTake)
+    {
+        SetHealth(this.life - damageTake);
+        AtivarSomDano();
+        Invoke("DesativarSomDano", 0.5f);
+
+    }
+    public int getHealth() => this.life;
+
+    public void SetHealth(int _life)
+    {
+        if (_life > MaxLife)
+        {
+            this.life = MaxLife;
+        }
+        else
+        {
+            this.life = _life;
+        }
+
+        UpdateLifeBar();
+
+        if (this.life <= 0)
+        {
+            if (players[0] == gameObject)
+            {
+                players.SetValue(null, 0);
+            }
+            else if (players[1] == gameObject)
+            {
+                players.SetValue(null, 1);
+            }
+            DeathController();
+        }
+    }
+
+    public void IncrementHealth(int lifeIncrement) => this.SetHealth(this.life + lifeIncrement);
+
+    public void UpdateLifeBar()
+    {
+        this._lifeBar.fillAmount = ((1.0f / this.MaxLife) * this.life);
+    }
+
+    public void AtivarSomDano()
+    {
+        SomLevandoDano.SetActive(true);
+    }
+    public void DesativarSomDano()
+    {
+        SomLevandoDano.SetActive(false);
+    }
 }
 

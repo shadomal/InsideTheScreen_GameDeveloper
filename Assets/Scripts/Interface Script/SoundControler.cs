@@ -1,18 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Audio;
 public class SoundControler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private AudioSource playerFootSteps;
+    [SerializeField] private AudioSource shoot_Sound;
+    [SerializeField] private AudioSource enemySound;
+    [SerializeField] private AudioSource questComplet;
+    
+    private void Awake()
     {
-        
+        playerFootSteps = GetComponent<AudioSource>();
+        shoot_Sound = GetComponent<AudioSource>();
+        enemySound = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
+    public void SoundPlayFootSteps() => playerFootSteps.Play();
+    public void SoundShoot() => shoot_Sound.Play();
+    public void enemySoundEffect() => enemySound.Play();
+    public void Sound_QuestComplet() => questComplet.Play();
+
 }

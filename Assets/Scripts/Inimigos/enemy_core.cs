@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 public class enemy_core : MonoBehaviour
 {
     [SerializeField] private GameObject[] players = new GameObject[1];
@@ -17,6 +18,7 @@ public class enemy_core : MonoBehaviour
     [SerializeField] private float shootspeed;
     [SerializeField] private float projectDestroyTime;
     [SerializeField] private long timeShoot;
+    [SerializeField] private Image healthBar_;
 
     private int targetID;
 
@@ -26,12 +28,13 @@ public class enemy_core : MonoBehaviour
     private void Awake()
     {
         this.targetID = 0;
-        enemies = GameObject.FindGameObjectsWithTag("Player");
-        enemyHealth = 20;
+        //enemies = GameObject.FindGameObjectsWithTag("Player");
+        enemyHealth = 100;
         //Atribuindo variaveis de ataque;
-        shootspeed = 10;
-        projectDestroyTime = 3;
-        timeShoot = 500;
+        shootspeed = 50;
+        projectDestroyTime = 10;
+        timeShoot = 1200;
+        enemyAgent = this.GetComponent<NavMeshAgent>();
     }
     //metodos acessores gets e sets
 
@@ -64,18 +67,26 @@ public class enemy_core : MonoBehaviour
         return null;
     }
 
-    private void OnCollisionEnter(Collision playerObject)
+    private void OnCollisionEnter(Collision other)
     {
-        if (playerObject.gameObject.tag == "projectile")
+        if (other.gameObject.tag == "player1")
         {
-            setHealth(1);
+           SetEnemyHealth(0);
         }
-
+        if (other.gameObject.tag == "limbo")
+        {
+            EnemyDie();
+        }
+        if (other.gameObject.tag == "projectile")
+        {
+            SetEnemyHealth(15);
+        }
     }
     private void OnTriggerEnter(Collider playersObj)
     {
-        if(playersObj.gameObject.tag == "projectile"){
-            setHealth(2);
+        if (playersObj.gameObject.tag == "projectile")
+        {
+            SetEnemyHealth(-15);
         }
     }
 
@@ -83,7 +94,7 @@ public class enemy_core : MonoBehaviour
     {
         if (chicote.gameObject.tag == "playerWhip")
         {
-            setHealth(1);
+            SetEnemyHealth(1);
         }
     }
 
@@ -138,4 +149,26 @@ public class enemy_core : MonoBehaviour
 
     public bool isInCooldown() => GetTimeNow() < this.cooldown;
 
+    public void EnemyDie()
+    {
+        Destroy(gameObject);
+    }
+    public int GetEnemyHealth() => this.enemyHealth;
+    public void SetEnemyHealth(int health)
+    {
+        enemyHealth -= health;
+        DrainHealthBar();
+        if (this.enemyHealth <= 0)
+        {
+            EnemyDie();
+        }
+    }
+    public void DrainHealthBar()
+    {
+        this.healthBar_.fillAmount -= 0.100f; //1 <-
+        if(healthBar_.fillAmount <= 0){
+            Destroy(gameObject);
+        }
+    }
 }
+ 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class chicote : MonoBehaviour
+public class chicote : SoundControler
 {
     [SerializeField] public GameObject player;
     [SerializeField] public GameObject playerWeapon;

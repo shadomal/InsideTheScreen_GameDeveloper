@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,29 +9,24 @@ public class PlayerTwoControl : player_core
     {
         float moveH = Input.GetAxis("Horizontal");
         float moveV = Input.GetAxis("Vertical");
+        
         move(moveH, moveV);
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && onGround == true) //novo
         {
-            jump(1);
+            jump();
         }
-
-        //Controles de ataque do player
-
-        if (Input.GetKey(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            BackPlayer();
+            AtivarSfxTroca();
+            Invoke("DesativarSfxTroca", 1.0f);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
         {
 
-
+            ativarChicote();
+            Invoke("desativarChicote", 1.1f);
         }
-        if (Input.GetKey(KeyCode.K))
-        {
-            //whipAtack();
-        }
-        if (Input.GetKey(KeyCode.H))
-        {
-            switchControl();  //Controlador de Troca de Personagem
-        }
-
-        verifySwitch();
     }
 }

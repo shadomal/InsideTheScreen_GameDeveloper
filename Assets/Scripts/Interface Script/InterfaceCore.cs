@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using System.Collections;       
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-public class InterfaceCore : MonoBehaviour
+public class InterfaceCore : SoundControler
 {
 
 
@@ -14,6 +14,7 @@ public class InterfaceCore : MonoBehaviour
     [SerializeField] private float playerPositionZ;
     [SerializeField] private GameObject pauseCanvas;
     [SerializeField] private GameObject levelClear;
+    [SerializeField] private GameObject _nextStage;
 
     public Animator loadingScreen;
     public string sceneToLoad;
@@ -24,7 +25,7 @@ public class InterfaceCore : MonoBehaviour
         //username.text = PlayerPrefs.GetString("username");
         //DontDestroyOnLoad(gameObject);
     }
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -32,10 +33,12 @@ public class InterfaceCore : MonoBehaviour
         {
             saveGame();
         }
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKey(KeyCode.P) || Input.GetKey(KeyCode.Escape))
         {
             menuPause();
+
         }
+
     }
     //Botão para salvar o Jogo;
     public void saveGame()
@@ -52,8 +55,15 @@ public class InterfaceCore : MonoBehaviour
     }
     public void menuPause()
     {
-        pauseFunction();
+        Time.timeScale = 0;
         pauseCanvas.SetActive(true);
+
+    }
+    public void backToGame()
+    {
+        pauseCanvas.SetActive(false);
+        Time.timeScale = 1;
+        //1 para tela rodando 0 para não está ativa;
     }
     public void exitGame()
     {
@@ -61,31 +71,29 @@ public class InterfaceCore : MonoBehaviour
     }
     public void playGame()
     {
-       SceneManager.LoadScene("FirstScene");
-       //loadScreen();
+        SceneManager.LoadScene("FirstScene");
+        //loadScreen();
     }
     public void restartGame()
     {
-        
+        SceneManager.LoadScene("FirstScene");
     }
-    public void loadGame()
+    public void options()
     {
-
-    }
-    public void options(){
         SceneManager.LoadScene("Options");
     }
-    public void loadScreen(){
+    public void loadScreen()
+    {
         loadingScreen.SetTrigger("Vai");
-        Invoke("CarregaDeVerdade",2);
+        Invoke("CarregaDeVerdade", 2);
     }
-    private void OnCollisionEnter(Collision other) {
-        if(other.gameObject.tag == "player"){
-            levelClear.SetActive(true);
-        }
+    
+    public void NextStage(){
+        SceneManager.LoadScene("Fase2");
     }
 
-    void CarregaDeVerdade(){
+    void CarregaDeVerdade()
+    {
         StartCoroutine(LoadYourAsyncScene());
     }
 
@@ -105,10 +113,11 @@ public class InterfaceCore : MonoBehaviour
         }
 
         loadingScreen.SetTrigger("Vai");
-        Invoke("DestroyMe",2);
+        Invoke("DestroyMe", 2);
     }
 
-    void DestroyMe(){
+    void DestroyMe()
+    {
         Destroy(gameObject);
     }
 
